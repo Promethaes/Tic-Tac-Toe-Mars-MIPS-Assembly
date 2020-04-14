@@ -3,7 +3,8 @@
 
 int main() {
 data:
-	int grid[9] = { 0,0,0,0,0,0,0,0,0 };
+	int grid[9]  = { 0,0,0,0,0,0,0,0,0 };
+	char charGrid[9] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ' };
 	int turn = 0;
 	int p1Symbol = 3;
 	int p2Symbol = 4;
@@ -29,14 +30,16 @@ gameLoop:
 	int whoWins = 2;
 
 	//if turn is 9 then no spots are left
-	if (turn == 9)
+	if (turn == 9) {
+		std::cout << "stalemate!\n";
 		goto exit;
+	}
 
 
 	//draw the grid
-	std::cout << grid[0] << "\t|" << grid[1] << "\t|" << grid[2] << "\n";
-	std::cout << grid[3] << "\t|" << grid[4] << "\t|" << grid[5] << "\n";
-	std::cout << grid[6] << "\t|" << grid[7] << "\t|" << grid[8] << "\n";
+	std::cout << charGrid[0] << "|" << charGrid[1] << "|" << charGrid[2] << "\n";
+	std::cout << charGrid[3] << "|" << charGrid[4] << "|" << charGrid[5] << "\n";
+	std::cout << charGrid[6] << "|" << charGrid[7] << "|" << charGrid[8] << "\n";
 	//let them pick a spot by typing 0 (enter) 3 like a 2D array
 	//don't use an actual 2D array, let evyn do his dimension math
 
@@ -51,10 +54,19 @@ input:
 		goto input;
 	}
 
+	for (unsigned i = 0; i < 9; i++) {
+		if (grid[i] == 0)
+			charGrid[i] = ' ';
+		else if (grid[i] == 3)
+			charGrid[i] = 'x';
+		else if (grid[i] == 4)
+			charGrid[i] = 'o';
+	}
+
 	//draw the grid
-	std::cout << grid[0] << "\t|" << grid[1] << "\t|" << grid[2] << "\n";
-	std::cout << grid[3] << "\t|" << grid[4] << "\t|" << grid[5] << "\n";
-	std::cout << grid[6] << "\t|" << grid[7] << "\t|" << grid[8] << "\n";
+	std::cout << charGrid[0] << "|" << charGrid[1] << "|" << charGrid[2] << "\n";
+	std::cout << charGrid[3] << "|" << charGrid[4] << "|" << charGrid[5] << "\n";
+	std::cout << charGrid[6] << "|" << charGrid[7] << "|" << charGrid[8] << "\n";
 
 	//determine if player1 or player2 has won
 
