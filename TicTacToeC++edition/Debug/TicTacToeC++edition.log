@@ -1,0 +1,3 @@
+﻿  main.cpp
+D:\Projects\Tic-Tac-Toe-Mars-MIPS-Assembly\TicTacToeC++edition\main.cpp(5,5): warning C4102: 'data': unreferenced label
+  TicTacToeC++edition.vcxproj -> D:\Projects\Tic-Tac-Toe-Mars-MIPS-Assembly\TicTacToeC++edition\Debug\TicTacToeC++edition.exe
