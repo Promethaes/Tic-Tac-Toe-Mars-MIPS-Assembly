@@ -5,6 +5,10 @@ turn: .word 0
 
 StartMessage: .asciiz "player 1, pick 3 for x, or 4 for y\n"
 StalemateMessage: .asciiz "it's a stalemate!\n"
+EnterCoordsMessage: .asciiz "enter x coords\n"
+EnterCoordsMessage2: .asciiz "enter y coords\n"
+SpotNotEmptyMessage: .asciiz "spot not empty\n"
+
 
 newline: .asciiz "\n"
 gridline: .asciiz "|"
@@ -52,8 +56,10 @@ gameLoop:
     drawGrid1:
         li $t7,3#if statement condition
         li $t8,0#iterator value
+        li $t6,0
         drawWhile:
-            beq $t8,$t7,exitDrawWhile
+            #if we are done the loop, then exit
+            beq $t8,$t7,input
 
             add $t6,$zero,$t8 #array offset holder
 
@@ -92,8 +98,63 @@ gameLoop:
 
             add $t8,$t8,1
             j drawWhile
-        exitDrawWhile:
+        input:
+            #xpos
+            #prompt user for input
+            li $v0, 4
+            la $a0,EnterCoordsMessage
+            syscall
 
+            #take user input
+            li $v0,5
+            syscall
+
+            move $s3,$v0
+            
+            #ypos
+            #prompt user for input
+            li $v0, 4
+            la $a0,EnterCoordsMessage2
+            syscall
+
+            #take user input
+            li $v0,5
+            syscall
+
+            move $s4,$v0
+
+            li $t9,3
+            mul $s4,$s4,$t9
+
+            add $s5,$s4,$s3
+            mul $s5,$s5,4
+
+            lw $t9,grid($s5)
+            #if grid[finalPos] == 0, place the symbol
+            beq $t9,$zero,placeSymbol
+
+            li $v0,4
+            la $a0,SpotNotEmptyMessage
+            syscall
+
+            j input#else back to top
+            placeSymbol:
+
+            #if turn % 2 == 0, its player one's turn 
+            li $t9,2           
+            div $t0,$t9
+            mfhi $t9
+            beq $t9,$zero,player1Turn
+            #else
+            la $t3,grid
+            add $t3,$t3,$s5
+            sw $s1,0($t3)
+
+            #insert jump condition here
+            player1Turn:
+            la $t3,grid
+            add $t3,$t3,$s5
+            sw $s1,0($t3)
 
 
 exit:
