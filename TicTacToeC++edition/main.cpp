@@ -1,28 +1,41 @@
 #include <iostream>
-
+#include <string>
 
 int main() {
 data:
 	int grid[9]  = { 0,0,0,0,0,0,0,0,0 };
 	char charGrid[9] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ' };
 	int turn = 0;
-	int p1Symbol = 3;
-	int p2Symbol = 4;
+	
+
+	std::string welcomeMessage = "Welcome to hardcore tictactoe at the fastest speed possible on machine\n";
+	std::string selectMessage = "Player 1, pick 3 for X or 4 for O\n";
+
+	std::string stalemateMessage = "stalemate!\n";
+	std::string spotMessage = "Spot not empty, try again\n";
+	std::string turnMessage = "Next player's turn!\n\n";
+
+	int p1Symbol = 3;//$S1
+	int p2Symbol = 4;//$S2
 
 preGame:
 	int tempInput = 0;
-	std::cout << "welcome to hardcore tictactoe at the fastest speed possible on machine\n";
-	std::cout << "player 1, pick 3 for x, or 4 for y\n";
+	std::cout << welcomeMessage;
+	std::cout << selectMessage;
 
 	std::cin >> tempInput;
-	if (tempInput != 3 && tempInput != 4)
-		goto preGame;
 
-	p1Symbol = tempInput;
-	if (p1Symbol == 3)
-		p2Symbol = 4;
-	else
-		p2Symbol = 3;
+	if (tempInput == 3)
+		goto gameLoop;
+	if (tempInput == 4)
+		goto symbolSwap;
+
+	goto preGame;
+
+symbolSwap:
+	p1Symbol++;
+	p2Symbol--;
+
 
 gameLoop:
 	int xPos = 0, yPos = 0;
@@ -31,7 +44,7 @@ gameLoop:
 
 	//if turn is 9 then no spots are left
 	if (turn == 9) {
-		std::cout << "stalemate!\n";
+		std::cout << stalemateMessage;
 		goto exit;
 	}
 
@@ -50,7 +63,7 @@ input:
 	if (grid[finalPos] == 0)
 		grid[finalPos] = turn % 2 == 0 ? p1Symbol : p2Symbol;
 	else {
-		std::cout << "spot not empty, try again\n";
+		std::cout << spotMessage;
 		goto input;
 	}
 
@@ -112,7 +125,7 @@ input:
 
 	turn++;
 
-	std::cout << "Next player's turn!\n\n";
+	std::cout << turnMessage;
 	system("pause");
 
 	goto gameLoop;
