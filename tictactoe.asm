@@ -56,12 +56,12 @@ gameLoop:
     drawGrid1:
         li $t7,3#if statement condition
         li $t8,0#iterator value
-        li $t6,0
+        li $t6,0#array offset holder
         drawWhile:
             #if we are done the loop, then exit
             beq $t8,$t7,input
-
-            add $t6,$zero,$t8 #array offset holder
+            
+            add $t6,$t6,$t8 #array offset holder
 
             #0, 3 and 6
             li $v0, 4
@@ -138,7 +138,7 @@ gameLoop:
             syscall
 
             j input#else back to top
-            placeSymbol:
+        placeSymbol:
 
             #if turn % 2 == 0, its player one's turn 
             li $t9,2           
@@ -148,13 +148,103 @@ gameLoop:
             #else
             la $t3,grid
             add $t3,$t3,$s5
-            sw $s1,0($t3)
+            sw $s2,0($t3)
 
-            #insert jump condition here
-            player1Turn:
-            la $t3,grid
+            #place character in number grid
+            li $t9,4
+            bne $s2,$t9,p2isX
+            #else
+            li $t9,'O'
+            la $t3,charGrid
+            div $s5, $s5, 4
+            mflo $s5
             add $t3,$t3,$s5
-            sw $s1,0($t3)
+            sb $t9,0($t3)
 
+            j drawNewGrid
+            p2isX:
+                li $t9,'X'
+                la $t3,charGrid
+                div $s5, $s5, 4
+                mflo $s5
+                add $t3,$t3,$s5
+                sb $t9,0($t3)
+
+                j drawNewGrid
+            
+            player1Turn:
+                la $t3,grid
+                add $t3,$t3,$s5
+                sw $s1,0($t3)
+
+            
+                #place character in number grid
+                li $t9,3
+                bne $s1,$t9,p1isO
+                #else
+                li $t9,'X'
+                la $t3,charGrid
+                div $s5, $s5, 4
+                mflo $s5
+                add $t3,$t3,$s5
+                sb $t9,0($t3)
+
+                j drawNewGrid
+            p1isO:
+                li $t9,'O'
+                la $t3,charGrid
+                div $s5, $s5, 4
+                mflo $s5
+                add $t3,$t3,$s5
+                sb $t9,0($t3)
+
+
+            drawNewGrid:
+             li $t7,3#if statement condition
+             li $t8,0#iterator value
+             li $t6,0#array offset holder
+             drawWhileNew:
+                 #if we are done the loop, then exit
+                 beq $t8,$t7,checkWinner
+       
+                 add $t6,$t6,$t8 #array offset holder
+       
+                 #0, 3 and 6
+                 li $v0, 4
+                 la $a0,charGrid($t6)
+                 syscall
+       
+                 #print |
+                 li $v0, 4
+                 la $a0,gridline
+                 syscall
+       
+                 addi $t6,$t6,1#incriment counter by one
+       
+                 #1, 4 and 7
+                 li $v0, 4
+                 la $a0,charGrid($t6)
+                 syscall
+                 
+                 #print |
+                 li $v0, 4
+                 la $a0,gridline
+                 syscall
+       
+                 addi $t6,$t6,1#incriment counter by one
+       
+                 #2, 5 and 8
+                 li $v0, 4
+                 la $a0,charGrid($t6)
+                 syscall
+       
+                 li $v0,4
+                 la $a0,newline
+                 syscall
+       
+                 add $t8,$t8,1
+                 j drawWhileNew
+
+            checkWinner:
 
 exit:
