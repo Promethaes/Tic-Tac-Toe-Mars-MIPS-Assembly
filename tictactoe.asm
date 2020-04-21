@@ -62,10 +62,6 @@ gameLoop:
             #if we are done the loop, then exit
             beq $t8,$t7,input
             
-            li $t9,4
-            mul $t9,$t9,$t8
-            add $t6,$t6,$t9 #array offset holder
-
             li $t2,3 #condition
             li $t3,0 #iterator value
             innerFor:
@@ -115,7 +111,8 @@ gameLoop:
             li $v0,4
             la $a0,newline
             syscall
-
+            li $t9,4
+            add $t6,$t6,$t9 #array offset holder
             add $t8,$t8,1
             j drawWhile
         input:
@@ -185,9 +182,7 @@ gameLoop:
                       #if we are done the loop, then exit
                       beq $t8,$t7,checkWinner
 
-                      li $t9,4
-                      mul $t9,$t9,$t8
-                      add $t6,$t6,$t9 #array offset holder
+                     
 
                       li $t2,3 #condition
                       li $t3,0 #iterator value
@@ -238,7 +233,8 @@ gameLoop:
                       li $v0,4
                       la $a0,newline
                       syscall
-
+                      li $t9,4
+                      add $t6,$t6,$t9 #array offset holder
                       add $t8,$t8,1
                       j drawWhileNew
         checkWinner:
