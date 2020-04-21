@@ -1,6 +1,5 @@
 .data
 grid: .word 0:9
-charGrid: .byte ' ':9
 turn: .word 0
 
 StartMessage: .asciiz "player 1, pick 3 for x, or 4 for y\n"
@@ -8,7 +7,9 @@ StalemateMessage: .asciiz "it's a stalemate!\n"
 EnterCoordsMessage: .asciiz "enter x coords\n"
 EnterCoordsMessage2: .asciiz "enter y coords\n"
 SpotNotEmptyMessage: .asciiz "spot not empty\n"
-
+X: .asciiz "X"
+O: .asciiz "O"
+Space: .asciiz " "
 
 newline: .asciiz "\n"
 gridline: .asciiz "|"
@@ -56,46 +57,62 @@ gameLoop:
     drawGrid1:
         li $t7,3#if statement condition
         li $t8,0#iterator value
-        li $t6,0
+        li $t6,0#array offset holder
         drawWhile:
             #if we are done the loop, then exit
             beq $t8,$t7,input
-
-            add $t6,$zero,$t8 #array offset holder
-
-            #0, 3 and 6
-            li $v0, 4
-            la $a0,charGrid($t6)
-            syscall
-
-            #print |
-            li $v0, 4
-            la $a0,gridline
-            syscall
-
-            addi $t6,$t6,1#incriment counter by one
-
-            #1, 4 and 7
-            li $v0, 4
-            la $a0,charGrid($t6)
-            syscall
             
-            #print |
-            li $v0, 4
-            la $a0,gridline
-            syscall
+            li $t2,3 #condition
+            li $t3,0 #iterator value
+            innerFor:
+                 beq $t3,$t2,innerForExit
 
-            addi $t6,$t6,1#incriment counter by one
+                 li $v0,4
+                 la $a0,gridline
+                 syscall
+                 #if character is x
+                 li $t9,3
+                 lw $t4, grid($t6)
+                 beq $t4,$t9,drawX
 
-            #2, 5 and 8
-            li $v0, 4
-            la $a0,charGrid($t6)
-            syscall
+                 #if character is o
+                 li $t9,4
+                 beq $t4,$t9,drawO
+
+                 #if its a space
+                 beq $t4,$zero,drawZero
+                 drawX:
+                     li $v0, 4
+                     la $a0,X
+                     syscall
+                     j drawGridLine
+                 drawO:
+                     li $v0, 4
+                     la $a0,O
+                     syscall
+                     j drawGridLine
+                 drawZero:
+                     li $v0, 4
+                     la $a0,Space
+                     syscall
+
+                 drawGridLine:
+                 li $v0,4
+                 la $a0,gridline
+                 syscall
+
+                 add $t6,$t6,4 #increment offset holder
+
+                 add $t3,$t3,1
+
+                 j innerFor
+            innerForExit:
 
             li $v0,4
             la $a0,newline
             syscall
-
+            li $t9,4
+            add $t6,$t6,$t9 #array offset holder
             add $t8,$t8,1
             j drawWhile
         input:
@@ -138,7 +155,7 @@ gameLoop:
             syscall
 
             j input#else back to top
-            placeSymbol:
+        placeSymbol:
 
             #if turn % 2 == 0, its player one's turn 
             li $t9,2           
@@ -148,13 +165,78 @@ gameLoop:
             #else
             la $t3,grid
             add $t3,$t3,$s5
-            sw $s1,0($t3)
+            sw $s2,0($t3)
 
-            #insert jump condition here
+            j drawNewGrid
+            
             player1Turn:
-            la $t3,grid
-            add $t3,$t3,$s5
-            sw $s1,0($t3)
+                la $t3,grid
+                add $t3,$t3,$s5
+                sw $s1,0($t3)
+                
+           drawNewGrid:
+                  li $t7,3#if statement condition
+                  li $t8,0#iterator value
+                  li $t6,0#array offset holder
+                  drawWhileNew:
+                      #if we are done the loop, then exit
+                      beq $t8,$t7,checkWinner
 
+                     
+
+                      li $t2,3 #condition
+                      li $t3,0 #iterator value
+                      innerForNew:
+                           beq $t3,$t2,innerForExitNew
+
+                           li $v0,4
+                           la $a0,gridline
+                           syscall
+                           #if character is x
+                           li $t9,3
+                           lw $t4,grid($t6)
+                           beq $t4,$t9,drawXNew
+
+                           #if character is o
+                           li $t9,4
+                           beq $t4,$t9,drawONew
+
+                           #if its a space
+                           beq $t4,$zero,drawZeroNew
+                           drawXNew:
+                               li $v0, 4
+                               la $a0,X
+                               syscall
+                               j drawGridLineNew
+                           drawONew:
+                               li $v0, 4
+                               la $a0,O
+                               syscall
+                               j drawGridLineNew
+                           drawZeroNew:
+                               li $v0, 4
+                               la $a0,Space
+                               syscall
+
+                           drawGridLineNew:
+                           li $v0,4
+                           la $a0,gridline
+                           syscall
+
+                           add $t6,$t6,4 #increment offset holder
+
+                           add $t3,$t3,1
+
+                           j innerForNew
+                      innerForExitNew:
+
+                      li $v0,4
+                      la $a0,newline
+                      syscall
+                      li $t9,4
+                      add $t6,$t6,$t9 #array offset holder
+                      add $t8,$t8,1
+                      j drawWhileNew
+        checkWinner:
 
 exit:
