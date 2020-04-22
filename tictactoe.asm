@@ -112,7 +112,6 @@ gameLoop:
             la $a0,newline
             syscall
             li $t9,4
-            add $t6,$t6,$t9 #array offset holder
             add $t8,$t8,1
             j drawWhile
         input:
@@ -234,7 +233,6 @@ gameLoop:
                       la $a0,newline
                       syscall
                       li $t9,4
-                      add $t6,$t6,$t9 #array offset holder
                       add $t8,$t8,1
                       j drawWhileNew
         checkWinner:
