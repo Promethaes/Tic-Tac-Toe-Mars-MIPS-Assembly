@@ -7,6 +7,10 @@ StalemateMessage: .asciiz "it's a stalemate!\n"
 EnterCoordsMessage: .asciiz "enter x coords\n"
 EnterCoordsMessage2: .asciiz "enter y coords\n"
 SpotNotEmptyMessage: .asciiz "spot not empty\n"
+
+Player1WinMessage: .asciiz "Player 1 wins!\n"
+Player2WinMessage: .asciiz "Player 2 wins!\n"
+
 X: .asciiz "X"
 O: .asciiz "O"
 Space: .asciiz " "
@@ -236,7 +240,147 @@ gameLoop:
                       add $t8,$t8,1
                       j drawWhileNew
         checkWinner:
+        #vertical 1
+        li $t7, 0#add to
+        
+        li $t9, 0
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 3
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 6
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
         
         
-
+        #vertical 2
+        li $t7, 0#add to
+        
+        li $t9, 1
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 4
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 7
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        #vertical 3
+        li $t7, 0#add to
+        
+        li $t9, 2
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 5
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 8
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        
+         #horizontal 1
+        li $t7, 0#add to
+        
+        li $t9, 0
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 1
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 2
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+         #horizontal 2
+        li $t7, 0#add to
+        
+        li $t9, 3
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 4
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 5
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        
+         #horizontal 3
+        li $t7, 0#add to
+        
+        li $t9, 6
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 7
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 8
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        
+         #diagonal 1
+        li $t7, 0#add to
+        
+        li $t9, 0
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 4
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 8
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+         #diagonal 2
+        li $t7, 0#add to
+        
+        li $t9, 2
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 4
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 6
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        
+        
+        
+        j gameLoop
+        
+        player1Win:
+        
+        li $v0, 4
+	la $a0, Player1WinMessage
+	syscall
+        j exit
+        
+        player2Win:
+        
+        li $v0, 4
+	la $a0, Player2WinMessage
+	syscall
+        j exit
+	
 exit:
