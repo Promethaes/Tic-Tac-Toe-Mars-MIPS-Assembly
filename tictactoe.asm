@@ -2,7 +2,7 @@
 grid: .word 0:9
 turn: .word 0
 
-StartMessage: .asciiz "player 1, pick 3 for x, or 4 for y\n"
+StartMessage: .asciiz "player 1, pick 3 for X, or 4 for Y\n"
 StalemateMessage: .asciiz "it's a stalemate!\n"
 EnterCoordsMessage: .asciiz "enter x coords\n"
 EnterCoordsMessage2: .asciiz "enter y coords\n"
@@ -236,5 +236,7 @@ gameLoop:
                       add $t8,$t8,1
                       j drawWhileNew
         checkWinner:
+        
+        
 
 exit:
