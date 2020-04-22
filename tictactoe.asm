@@ -2,7 +2,7 @@
 grid: .word 0:9
 turn: .word 0
 
-StartMessage: .asciiz "player 1, pick 3 for X, or 4 for Y\n"
+StartMessage: .asciiz "player 1, pick 3 for X, or 4 for O\n"
 StalemateMessage: .asciiz "it's a stalemate!\n"
 EnterCoordsMessage: .asciiz "enter x coords\n"
 EnterCoordsMessage2: .asciiz "enter y coords\n"
@@ -170,76 +170,20 @@ gameLoop:
             add $t3,$t3,$s5
             sw $s2,0($t3)
 
-            j drawNewGrid
+            j checkWinner
             
             player1Turn:
                 la $t3,grid
                 add $t3,$t3,$s5
                 sw $s1,0($t3)
                 
-           drawNewGrid:
-                  li $t7,3#if statement condition
-                  li $t8,0#iterator value
-                  li $t6,0#array offset holder
-                  drawWhileNew:
-                      #if we are done the loop, then exit
-                      beq $t8,$t7,checkWinner
-
-                     
-
-                      li $t2,3 #condition
-                      li $t3,0 #iterator value
-                      innerForNew:
-                           beq $t3,$t2,innerForExitNew
-
-                           li $v0,4
-                           la $a0,gridline
-                           syscall
-                           #if character is x
-                           li $t9,3
-                           lw $t4,grid($t6)
-                           beq $t4,$t9,drawXNew
-
-                           #if character is o
-                           li $t9,4
-                           beq $t4,$t9,drawONew
-
-                           #if its a space
-                           beq $t4,$zero,drawZeroNew
-                           drawXNew:
-                               li $v0, 4
-                               la $a0,X
-                               syscall
-                               j drawGridLineNew
-                           drawONew:
-                               li $v0, 4
-                               la $a0,O
-                               syscall
-                               j drawGridLineNew
-                           drawZeroNew:
-                               li $v0, 4
-                               la $a0,Space
-                               syscall
-
-                           drawGridLineNew:
-                           li $v0,4
-                           la $a0,gridline
-                           syscall
-
-                           add $t6,$t6,4 #increment offset holder
-
-                           add $t3,$t3,1
-
-                           j innerForNew
-                      innerForExitNew:
-
-                      li $v0,4
-                      la $a0,newline
-                      syscall
-                      li $t9,4
-                      add $t8,$t8,1
-                      j drawWhileNew
         checkWinner:
+
+        #t2 and t3 are used to figure out who won
+        li $t9,3
+        mul $t2,$s1,$t9
+        mul $t3,$s2,$t9
+
         #vertical 1
         li $t7, 0#add to
         
@@ -247,45 +191,52 @@ gameLoop:
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        li $t9, 3
+        li $t9, 12
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        li $t9, 6
+        li $t9, 24
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
+
         #vertical 2
         li $t7, 0#add to
-        
-        li $t9, 1
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
         
         li $t9, 4
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        li $t9, 7
+        li $t9, 16
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
+        li $t9, 28
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
+
         #vertical 3
         li $t7, 0#add to
-        
-        li $t9, 2
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
-        
-        li $t9, 5
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
         
         li $t9, 8
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
+        li $t9, 20
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 32
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
         
          #horizontal 1
         li $t7, 0#add to
@@ -294,38 +245,7 @@ gameLoop:
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        li $t9, 1
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
-        
-        li $t9, 2
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
-        
-         #horizontal 2
-        li $t7, 0#add to
-        
-        li $t9, 3
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
-        
         li $t9, 4
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
-        
-        li $t9, 5
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
-        
-        
-         #horizontal 3
-        li $t7, 0#add to
-        
-        li $t9, 6
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
-        
-        li $t9, 7
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
@@ -333,7 +253,45 @@ gameLoop:
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
+
+         #horizontal 2
+        li $t7, 0#add to
         
+        li $t9, 12
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 16
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 20
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
+
+         #horizontal 3
+        li $t7, 0#add to
+        
+        li $t9, 24
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 28
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        li $t9, 32
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
+
          #diagonal 1
         li $t7, 0#add to
         
@@ -341,31 +299,36 @@ gameLoop:
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        li $t9, 4
+        li $t9, 16
         lw $t8, grid($t9)
         add $t7, $t7, $t8
+        
+        li $t9, 32
+        lw $t8, grid($t9)
+        add $t7, $t7, $t8
+        
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
+
+         #diagonal 2
+        li $t7, 0#add to
         
         li $t9, 8
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-         #diagonal 2
-        li $t7, 0#add to
-        
-        li $t9, 2
+        li $t9, 16
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        li $t9, 4
+        li $t9, 24
         lw $t8, grid($t9)
         add $t7, $t7, $t8
         
-        li $t9, 6
-        lw $t8, grid($t9)
-        add $t7, $t7, $t8
+        beq $t7,$t2,player1Win
+        beq $t7,$t3,player2Win
         
-        
-        
+        add $t0,$t0,1
         
         j gameLoop
         
@@ -384,3 +347,65 @@ gameLoop:
         j exit
 	
 exit:
+
+ drawGrid2:
+        li $t7,3#if statement condition
+        li $t8,0#iterator value
+        li $t6,0#array offset holder
+        drawWhile2:
+            #if we are done the loop, then exit
+            beq $t8,$t7,exit2
+            
+            li $t2,3 #condition
+            li $t3,0 #iterator value
+            innerFor2:
+                 beq $t3,$t2,innerForExit2
+
+                 li $v0,4
+                 la $a0,gridline
+                 syscall
+                 #if character is x
+                 li $t9,3
+                 lw $t4, grid($t6)
+                 beq $t4,$t9,drawX2
+
+                 #if character is o
+                 li $t9,4
+                 beq $t4,$t9,drawO2
+
+                 #if its a space
+                 beq $t4,$zero,drawZero2
+                 drawX2:
+                     li $v0, 4
+                     la $a0,X
+                     syscall
+                     j drawGridLine2
+                 drawO2:
+                     li $v0, 4
+                     la $a0,O
+                     syscall
+                     j drawGridLine2
+                 drawZero2:
+                     li $v0, 4
+                     la $a0,Space
+                     syscall
+
+                 drawGridLine2:
+                 li $v0,4
+                 la $a0,gridline
+                 syscall
+
+                 add $t6,$t6,4 #increment offset holder
+
+                 add $t3,$t3,1
+
+                 j innerFor2
+            innerForExit2:
+
+            li $v0,4
+            la $a0,newline
+            syscall
+            li $t9,4
+            add $t8,$t8,1
+            j drawWhile2
+exit2:
