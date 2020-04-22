@@ -1,3 +1,7 @@
+#Anthony Smiderle 100695532
+#Evyn Brouwer 100702629
+#Jeremy Kan 100704536
+
 .data
 grid: .word 0:9
 turn: .word 0
@@ -7,6 +11,7 @@ StalemateMessage: .asciiz "it's a stalemate!\n"
 EnterCoordsMessage: .asciiz "enter x coords\n"
 EnterCoordsMessage2: .asciiz "enter y coords\n"
 SpotNotEmptyMessage: .asciiz "spot not empty\n"
+PlayAgain: .asciiz "Do you want to play again? 1 for yes, 2 for no\n"
 
 Player1WinMessage: .asciiz "Player 1 wins!\n"
 Player2WinMessage: .asciiz "Player 2 wins!\n"
@@ -56,6 +61,8 @@ gameLoop:
     #else go to the stalemate message
     li $v0, 4
     la,$a0,StalemateMessage
+
+    syscall
     j exit
 
     drawGrid1:
@@ -409,3 +416,17 @@ exit:
             add $t8,$t8,1
             j drawWhile2
 exit2:
+
+li $v0,4
+la $a0,PlayAgain
+
+syscall
+
+li $v0,5
+syscall
+
+move $t0,$v0
+
+li $t9,1
+beq $t0,$t9,preGame
+
